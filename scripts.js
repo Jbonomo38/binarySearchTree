@@ -156,17 +156,62 @@ class Tree {
         }
     }
 
-    levelOrder(callback, node = this.root) {
-        // INCOMPLETE
-        callback(node.data);
-        if(node.left) {
-            this.levelOrder(callback, node.left);
+    levelOrder(callback, node = this.root, queue = []) {
+        if(!callback) { throw new Error ("No callback"); }
+        if(node === null) return;
+
+        if(node.data !== this.root.data) { node = queue.shift(); }
+        callback(node);
+
+        if(node.left !== null) {
+            queue.push(node.left);
+        }
+        if(node.right !== null) {
+            queue.push(node.right);
         }
 
-        if(node.right) {
-            this.levelOrder(callback, node.right);
+        if(queue.length > 0) {
+            return this.levelOrder(callback, queue[0], queue);
         }
+
         return;
+    }
+
+    inOrder(callback, node = this.root) {
+        // from left to right
+        if(!callback) { throw new Error("No Callback"); }
+        if(node === null) return;
+        this.inOrder(callback, node.left);
+        callback(node);
+        this.inOrder(callback, node.right);
+    }
+
+    preOrder(callback, node = this.root) {
+        // start at root, traverse left subtree, then traverse right subtree
+        if(!callback) { throw new Error("No Callback"); }
+        if(node === null) return;
+        callback(node);
+        this.preOrder(callback, node.left);
+        this.preOrder(callback, node.right);
+    }
+
+    postOrder(callback, node = this.root) {
+        if(!callback) { throw new Error("No Callback"); }
+        if(node === null) return;
+        this.postOrder(callback, node.left);
+        this.postOrder(callback, node.right);
+        callback(node.data);
+    }
+
+    height(node, height = -1) {
+        // from root node to node
+        
+        
+    }
+
+    depth(node) {
+        // from node to root node
+
     }
 }
 
@@ -184,7 +229,7 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
   };
  
 
-const bst = [12, 1, 4, 7, 3, 9, 4, 13, 12, 15, 18];
+const bst = [12, 1, 4, 7, 3, 9, 4, 13, 12, 15, 18, 22, 25, 33];
 const ex = new Tree(bst);
 console.log(ex.sortAndFilter(bst));
 console.log(ex.root);
@@ -200,4 +245,4 @@ console.log(ex.root);
 // prettyPrint(ex.root);
 // ex.deleteItem(18);
 prettyPrint(ex.root);
-ex.levelOrder(console.log);
+ex.postOrder(console.log);
